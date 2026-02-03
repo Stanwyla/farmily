@@ -1,27 +1,821 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Farmily</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Farmily Bakery + Brunch</title>
+
   <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #0f172a;
-      color: #e5e7eb;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600..900&family=Inter:wght@400;500;600;700;800&display=swap');
+    :root{
+      --bg: #0b1220;
+      --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --font-chinese-serif: 'Noto Serif SC', serif;
+      --font-display: Fraunces, ui-serif, Georgia, "Times New Roman", Times, serif;
+      --panel: rgba(255,255,255,0.06);
+      --panel-2: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.10);
+      --text: #e5e7eb;
+      --muted: rgba(229,231,235,0.75);
+      --accent: #9ef7d1;
+      --shadow: 0 18px 60px rgba(0,0,0,0.45);
+      --radius: 18px;
+      --max: 1100px;
+      --gap: 18px;
+      --topbar-1: rgba(32, 15, 11, 0.9);
+      --topbar-2: rgba(54, 39, 20, 0.34);
     }
-    h1 {
-      font-size: 3rem;
-      font-weight: 600;
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      background: url("assets/bg.jpg") center / cover no-repeat fixed;
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.45;
+      overflow-x: hidden;
+    }
+    body::before{
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55); /* ← 暗度在这里调 */
+  pointer-events: none;
+  z-index: 0;
+}
+
+body > *{
+  position: relative;
+  z-index: 1;
+}
+
+    a{ color: inherit; text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    .container{
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    /* Sticky top bar */
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: linear-gradient(to bottom, var(--topbar-1), var(--topbar-2));
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .topbar .inner{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      gap: 12px;
+    }
+
+    .brand{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 650;
+      letter-spacing: 0.2px;
+    }
+    .logo{
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(158,247,209,0.9), rgba(158,247,209,0.25) 55%, transparent 70%),
+        linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .nav{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .pill{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(229,231,235,0.92);
+    }
+    .pill strong{ color: var(--text); font-weight: 650; }
+
+    /* Hero */
+    header.hero{
+      padding: 40px 0 22px;
+    }
+    /* Hero (image background + title + hover tooltip) */
+    .heroStage{
+      position: relative;
+      min-height: 420px;
+      overflow: hidden;
+    }
+
+  /* Hero slideshow background layers */
+.heroBgLayer{
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 900ms ease;
+  z-index: 0;
+  will-change: opacity, transform;
+}
+
+.heroBgLayer.isOn{
+  opacity: 1;
+  animation: heroKenBurns 7.2s linear both;
+}
+
+/* Slow push (Ken Burns) */
+@keyframes heroKenBurns{
+  from{ transform: scale(1.06) translate3d(0,0,0); }
+  to{ transform: scale(1.14) translate3d(-2.2%, -1.2%, 0); }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .heroBgLayer{ transition: none; }
+  .heroBgLayer.isOn{ animation: none; transform: none; }
+}
+
+/* ensure vignette sits above images */
+.heroStage::after{ z-index: 2; }
+
+    /* Replace the placeholder gradient with a real image later:
+       put your image at assets/hero.jpg and uncomment the url(...) line. */
+  .heroStage::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* overlays only (image is handled by bg layers) */
+  background:
+    linear-gradient(180deg, rgba(11,18,32,0.10), rgba(11,18,32,0.78)),
+    radial-gradient(900px 500px at 20% 20%, rgba(158,247,209,0.14), transparent 55%),
+    radial-gradient(800px 500px at 80% 20%, rgba(99,102,241,0.12), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+    .heroStage::after{
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(800px 420px at 50% 45%, rgba(0,0,0,0.10), rgba(0,0,0,0.55));
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .heroTitleWrap{
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none; /* wrapper ignores pointer events */
+    }
+
+    /* Large invisible trigger zone (about 70% width on the left) */
+    .heroTrigger{
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      pointer-events: auto; /* trigger receives pointer events */
+    }
+
+    /* Keep the text anchored near bottom-left within the trigger */
+    .heroText{
+      position: absolute;
+      left: 22px;
+      bottom: 55px;
+    }
+
+    /* One shared panel that contains BOTH the title and the intro.
+       It starts slightly below the hero bottom so the intro is clipped.
+       On hover/focus, the whole panel slides up to reveal the intro. */
+    /* Title + intro as one text block (no box).
+       The initial translateY is computed in JS and stored in --panel-offset,
+       so the intro is fully clipped below the hero bottom until hover/focus. */
+    .heroPanel{
+      display: grid;
+      gap: 10px;
+      justify-items: start;
+      text-align: left;
+
+      /* remove box look */
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+
+      transform: translateY(var(--panel-offset, 160px));
+      transition: transform 260ms ease;
+      will-change: transform;
+    }
+
+.heroTrigger:hover .heroPanel,
+.heroTrigger:focus-within .heroPanel{
+  transform: translateY(0);
+}
+
+    .heroIntro{
+      margin: 0;
+      max-width: 56ch;
+      color: rgba(229,231,235,0.86);
+      font-size: 14px;
+      font-weight: 520;
+      line-height: 1.35;
+      text-shadow: 0 14px 40px rgba(0,0,0,0.55);
+    }
+
+    .heroWord{
+      font-family: var(--font-display);
+      font-variation-settings: "opsz" 72;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-size: clamp(54px, 7vw, 86px);
+      font-weight: 800;
+      letter-spacing: -1.2px;
+      line-height: 0.95;
+      cursor: default;
+      user-select: none;
+      text-shadow: 0 18px 55px rgba(0,0,0,0.55);
+    }
+
+
+
+    @media (max-width: 520px){
+      .heroStage{ min-height: 360px; }
+    }
+
+    .heroCard{
+      border-radius: calc(var(--radius) + 6px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* left hero content */
+
+    /* Section headings */
+    section{
+      padding: 28px 0;
+    }
+    .sectionHead{
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 12px;
+    }
+    .sectionHead h2{
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -0.2px;
+    }
+    .sectionHead p{
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Menu rows */
+    /* Menu rows (simplified) */
+.menuRow{
+  margin-top: 18px;
+}
+
+.menuLabel{
+  font-size: 16px;
+  font-weight: 750;
+  letter-spacing: -0.2px;
+  margin: 0 0 10px;
+  color: rgba(229,231,235,0.92);
+}
+
+/* Keep horizontal swipe */
+.scroller{
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(260px, 340px);
+  gap: 12px;
+  padding: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.scroller:focus{ outline: none; }
+.scroller::-webkit-scrollbar{ height: 10px; }
+.scroller::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,0.15);
+  border-radius: 999px;
+  border: 2px solid rgba(11,18,32,0.70);
+}
+
+/* Menu card (hero-like): image background + name; hover slides up to reveal intro */
+.menuCard{
+  scroll-snap-align: start;
+  position: relative;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.12);
+  overflow: hidden;
+  min-height: 400px;
+  background: rgba(255,255,255,0.04);
+  box-shadow: 0 14px 44px rgba(0,0,0,0.40);
+}
+
+/* Dark overlay on top of the card image (image is handled by .menuCardImg) */
+.menuCard::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.62));
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Per-card background image layer */
+.menuCardImg{
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 0;
+  transform: scale(1.03);
+}
+
+.menuCardOverlay{
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 28px;
+  z-index: 2;
+
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  text-align: left;
+
+  /* no visible box; just text */
+  padding: 0;
+  background: transparent;
+  border: none;
+  /* transform: translateY(var(--card-offset, 120px)); */
+  /* transition: transform 260ms ease; */
+  /* will-change: transform; */
+  pointer-events: none; /* hover detected on card */
+}
+
+
+
+
+
+.menuCardName{
+  font-size: 20px;
+  font-weight: 780;
+  letter-spacing: -0.1px;
+  color: rgba(229,231,235,0.96);
+  text-shadow: 0 18px 55px rgba(0,0,0,0.55);
+  line-height: 22px;
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 48;
+}
+
+.menuCardDesc{
+  margin: 0;
+  color: rgba(229,231,235,0.86);
+  font-size: 13px;
+  font-weight: 520;
+  line-height: 1.35;
+  max-width: 56ch;
+  text-shadow: 0 14px 40px rgba(0,0,0,0.55);
+}
+
+/* Description is hidden by default so titles align perfectly */
+.menuCardDesc{
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 800ms ease, opacity 600ms ease;
+  opacity: 0;
+}
+
+.menuCard:hover .menuCardDesc,
+.menuCard:focus-within .menuCardDesc{
+  max-height: 200px; /* enough to reveal full text */
+  opacity: 1;
+}
+
+    /* Footer */
+    footer{
+      padding: 34px 0 48px;
+    }
+    .footerGrid{
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      align-items: start;
+    }
+    @media (max-width: 900px){
+      .footerGrid{ grid-template-columns: 1fr; }
+    }
+
+    .footerCard{
+      border-radius: calc(var(--radius) + 6px);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      padding: 18px;
+      box-shadow: 0 12px 50px rgba(0,0,0,0.35);
+    }
+    .footerCard h3{ margin: 0 0 10px; font-size: 16px; }
+    .footerCard p{ margin: 0; color: var(--muted); font-size: 13px; }
+
+    .kv{
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .kvRow{
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 10px;
+      color: rgba(229,231,235,0.9);
+      font-size: 14px;
+    }
+    .kvRow span{ color: var(--muted); font-size: 13px; }
+
+    .social{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    /* Utility */
+    .anchor{ scroll-margin-top: 74px; }
+    .srOnly{
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
     }
   </style>
 </head>
 <body>
-  <h1>🚜 Farmily is live</h1>
+  <div class="topbar">
+    <div class="container">
+      <div class="inner">
+        <a class="brand" href="#top">
+          <div>
+            <div style="font-size: 14px; line-height: 1;">Farmily</div>
+            <div style="font-size: 12px; color: rgba(229,231,235,0.65); line-height: 1.2;">Bakery & Brunch</div>
+          </div>
+        </a>
+
+        <nav class="nav" aria-label="Primary">
+          <a class="pill" href="#menu"><strong>菜单</strong></a>
+          <a class="pill" href="#contact">联系我们</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <main id="top">
+    <!-- 1) Name + logo + restaurant image -->
+    <header class="hero">
+      <div class="container">
+        <div class="heroCard">
+          <div class="heroStage" role="img" aria-label="Restaurant photo background placeholder">
+            <div class="heroBgLayer" id="heroBgA" aria-hidden="true"></div>
+            <div class="heroBgLayer" id="heroBgB" aria-hidden="true"></div>
+            <div class="heroTitleWrap">
+  <div class="heroTrigger">
+    <div class="heroText">
+      <div class="heroPanel">
+        <div class="heroWord" tabindex="0">Farmily 米舍</div>
+        <p class="heroIntro">A cozy bakery + brunch table—warm loaves, silky pasta, and desserts that feel like a little celebration.</p>
+      </div>
+    </div>
+  </div>
+</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 2) Menu: each category is a row; swipe / scroll left-right for cards -->
+    <section id="menu" class="anchor">
+      <div class="container">
+        <div class="sectionHead">
+          <h2>菜单</h2>
+        </div>
+
+        <!-- i) Sandwiches -->
+        <div class="menuRow" aria-labelledby="sandwich-title">
+          <div class="menuLabel" id="sandwich-title">Open Sandwiches</div>
+
+          <div class="scroller" tabindex="0" data-scroller>
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/1.jpg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">超级大虾牛油果开放式三明治</div>
+                <div class="menuCardName">SUPER Large Shrimp+Avacado</div>
+                <p class="menuCardDesc">新鲜的大虾+溏心煎蛋，底层涂抹厚厚的牛油果泥，减脂人士首选的高蛋白一餐！</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/2.jpg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">滑蛋三文鱼开放式三明治</div>
+                <div class="menuCardName">Scrambled Eggs with Salmon</div>
+                <p class="menuCardDesc">超级嫩的滑蛋入口即化，三文鱼脑袋的最爱.</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/3.jpg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">莓果乳酪开放式三明治</div>
+                <div class="menuCardName">Berries & Cheese</div>
+                <p class="menuCardDesc">店里自制的莓果乳酪，加上超多新鲜的混合莓果</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/4.jpg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">番茄肉酱开放式三明治</div>
+                <div class="menuCardName">Bolognese Sandwich</div>
+                <p class="menuCardDesc">小时熬制的超多料肉酱+流心无菌蛋（戳破的一刻超治愈），配上店里自己烤的乡村面包</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- ii) Pasta -->
+        <div class="menuRow" aria-labelledby="pasta-title">
+          <div class="menuLabel" id="pasta-title">Pasta</div>
+
+          <div class="scroller" tabindex="0" data-scroller>
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/pasta/1.jpg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">博洛尼亚肉酱意面</div>
+                <div class="menuCardName">Pasta di Bologna</div>
+                <p class="menuCardDesc">满满的肉酱，价值感超足的摆盘，出片又好吃.</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/pasta/2.jpg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">蘑菇培根奶油意面</div>
+                <div class="menuCardName">Pappardelle alla crema di funghi</div>
+                <p class="menuCardDesc">浓郁的奶香和芝士香，爱吃宽面的朋友们可以冲！</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/pasta/3.jpg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">辣奶油培根意面</div>
+                <div class="menuCardName">Spicy Cream and Bacon</div>
+                <p class="menuCardDesc">一些韩式风味，辣味和培根的香气很好中和了奶油，好吃不腻</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/pasta/4.jpg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">渔港海鲜意面</div>
+                <div class="menuCardName">Fisherman's Spaghetti</div>
+                <p class="menuCardDesc">非常丰富新鲜海鲜：黑虎虾、青口贝、鱿鱼，海鲜爱好者会喜欢.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- iii) Desserts -->
+        <div class="menuRow" aria-labelledby="yogurt-title">
+          <div class="menuLabel" id="yogurt-title">Yogurt Bowls</div>
+
+          <div class="scroller" tabindex="0" data-scroller>
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/yogurt-bowls/1.jpg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">莓果脆脆碗</div>
+                <div class="menuCardName">Berry Crunch Bowl</div>
+                <p class="menuCardDesc">+自制格兰诺拉Granola燕麦片+大块农场蜂巢+新鲜水果和果酱.</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/yogurt-bowls/2.jpg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">黑芝麻红豆蜂巢酸奶碗</div>
+                <div class="menuCardName">Black Sesame, Red Bean and Honeycomb</div>
+                <p class="menuCardDesc">浓郁的黑芝麻酱+手工酸奶+自制Granola燕麦片+手工熬制红豆馅料+农场蜂巢！</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/yogurt-bowls/3.jpg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">看得出来有香蕉但是网页作者不知道这个碗的名字叫什么</div>
+                <p class="menuCardDesc">banana.</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/yogurt-bowls/4.jpg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">这个碗和第一张图是不是同一个东西来着</div>
+                <p class="menuCardDesc">想不到要写什么，那就先祝Milly天天开心吧！</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+    <!-- 3) Address + email + social links -->
+    <footer id="contact" class="anchor">
+      <div class="container">
+        <div class="footerGrid">
+          <div class="footerCard">
+            <h3>店铺信息</h3>
+            <div class="kv">
+              <div class="kvRow"><span>地址</span><div>北京市东城区南馆公园西门进入右转20米</div></div>
+              <div class="kvRow"><span>邮箱</span><div><a href="mailto:MillyWang2022@outlook.com">MillyWang2022@outlook.com</a></div></div>
+              <div class="kvRow"><span>营业时间</span><div>Mon–Sun 8:00–20:00</div></div>
+            </div>
+          </div>
+
+          <div class="footerCard">
+            <h3>社交媒体</h3>
+            <div class="social">
+              <a class="btn" href="https://xhslink.com/m/8PwnxWfJlI1" target="_blank" rel="noopener noreferrer">关注小红书</a>
+          </div>
+        </div>
+
+        <div style="margin-top: 14px; color: rgba(229,231,235,0.55); font-size: 12px;">
+          © <span id="year"></span> Farmily. Built with love & butter.
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // Smooth in-page nav (keeps it simple and compatible)
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const href = a.getAttribute('href');
+        if (!href || href === '#') return;
+        const el = document.querySelector(href);
+        if (!el) return;
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // Row scroll controls
+    function scrollRow(btn, dir){
+      const row = btn.closest('.menuRow');
+      const scroller = row ? row.querySelector('[data-scroller]') : null;
+      if (!scroller) return;
+      const amount = Math.max(260, Math.floor(scroller.clientWidth * 0.85));
+      scroller.scrollBy({ left: dir * amount, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('button[data-scroll]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const dir = btn.dataset.scroll === 'left' ? -1 : 1;
+        scrollRow(btn, dir);
+      });
+    });
+
+    // Keyboard support when scroller focused
+    document.querySelectorAll('[data-scroller]').forEach(scroller => {
+      scroller.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        e.preventDefault();
+        const dir = e.key === 'ArrowLeft' ? -1 : 1;
+        const amount = Math.max(260, Math.floor(scroller.clientWidth * 0.85));
+        scroller.scrollBy({ left: dir * amount, behavior: 'smooth' });
+      });
+    });
+// Hero slideshow (cross-fade). Put images in assets/hero/ and list them here.
+const HERO_IMAGES = [
+  'assets/hero/1.jpg',
+  'assets/hero/2.jpg',
+  'assets/hero/3.jpg',
+  'assets/hero/4.jpg',
+  'assets/hero/5.jpg'
+];
+
+function initHeroSlideshow(){
+  const a = document.getElementById('heroBgA');
+  const b = document.getElementById('heroBgB');
+  if (!a || !b || !Array.isArray(HERO_IMAGES) || HERO_IMAGES.length === 0) return;
+
+  // Preload
+  HERO_IMAGES.forEach(src => { const img = new Image(); img.src = src; });
+
+  let idx = 0;
+  let showingA = true;
+
+  // initial
+  a.style.backgroundImage = `url('${HERO_IMAGES[0]}')`;
+  a.classList.add('isOn');
+
+  const intervalMs = 6000;
+
+  setInterval(() => {
+    idx = (idx + 1) % HERO_IMAGES.length;
+    const nextSrc = HERO_IMAGES[idx];
+
+    const on = showingA ? a : b;
+    const off = showingA ? b : a;
+
+    off.style.backgroundImage = `url('${nextSrc}')`;
+    off.classList.add('isOn');
+    on.classList.remove('isOn');
+
+    showingA = !showingA;
+  }, intervalMs);
+}
+
+window.addEventListener('load', initHeroSlideshow);
+    // Adaptive hero reveal: compute how far to push the block down so the intro is fully hidden.
+    function updateHeroPanelOffset(){
+      const panel = document.querySelector('.heroPanel');
+      const intro = document.querySelector('.heroIntro');
+      if (!panel || !intro) return;
+
+      // Height of the intro plus the vertical gap between title and intro.
+      // Add a bigger safety margin so nothing peeks out.
+      const gap = 10; // matches CSS gap in .heroPanel
+      const safety = 18; // bigger safety so nothing peeks out
+
+      const introH = Math.ceil(intro.getBoundingClientRect().height);
+      // Ensure we always hide the entire intro (and a bit more) even during font/layout changes.
+      const offset = Math.max(90, introH + gap + safety);
+      panel.style.setProperty('--panel-offset', `${offset}px`);
+    }
+
+    // Run once fonts/layout settle, and keep it updated on resize/content changes.
+    window.addEventListener('load', () => {
+      updateHeroPanelOffset();
+      requestAnimationFrame(updateHeroPanelOffset);
+      setTimeout(updateHeroPanelOffset, 150);
+      setTimeout(updateHeroPanelOffset, 500);
+    });
+    window.addEventListener('resize', updateHeroPanelOffset);
+
+    // Observe size changes (e.g., responsive font sizing, future text edits)
+    (function(){
+      const intro = document.querySelector('.heroIntro');
+      if (!intro || typeof ResizeObserver === 'undefined') return;
+      const ro = new ResizeObserver(() => updateHeroPanelOffset());
+      ro.observe(intro);
+    })();
+
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+  </script>
 </body>
 </html>
