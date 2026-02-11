@@ -376,6 +376,27 @@ body > *{
       .heroStage{ min-height: 360px; }
       .scroller{ grid-auto-columns: minmax(235px, 78vw); }
     }
+    @media (max-width: 760px){
+      .heroText{
+        left: 18px;
+        bottom: 92px;
+      }
+      .heroSideCta{
+        left: 18px;
+        right: auto;
+        top: auto;
+        bottom: 22px;
+        width: auto;
+        transform: translateY(0);
+      }
+      .heroCtaLabel{
+        position: static;
+        padding: 8px 10px;
+        min-height: 0;
+        border-radius: 10px;
+        background: rgba(11,18,32,0.42);
+      }
+    }
 
     .heroCard{
       border-radius: calc(var(--radius) + 6px);
