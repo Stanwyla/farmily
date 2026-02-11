@@ -50,6 +50,48 @@ body > *{
   position: relative;
   z-index: 1;
 }
+.splash{
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: #f2e8d8 url("assets/video/animation_bg.jpg") center / cover no-repeat;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 360ms ease, visibility 360ms ease;
+}
+.splash::before{
+  content: none;
+}
+.splash::after{
+  content: none;
+}
+.splash.isDone{
+  opacity: 0;
+  visibility: hidden;
+}
+.splashVideo{
+  position: relative;
+  z-index: 1;
+  background: #f2e8d8;
+  width: min(68vw, 920px);
+  max-height: 80vh;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  clip-path: inset(2.2% 2.6% 2.4% 2.2% round 16px);
+  filter: brightness(1.12) contrast(1.07);
+  border-radius: 16px;
+  border: none;
+  box-shadow: none;
+}
+@media (max-width: 640px){
+  .splashVideo{
+    width: 90vw;
+    clip-path: inset(2.2% 2.8% 2.5% 2.2% round 12px);
+  }
+}
 
     a{ color: inherit; text-decoration: none; }
     a:hover{ text-decoration: underline; }
@@ -210,6 +252,17 @@ body > *{
       left: 22px;
       bottom: 55px;
     }
+    .heroSideCta{
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 30%;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 220ms ease, transform 220ms ease;
+      pointer-events: none;
+    }
 
     /* One shared panel that contains BOTH the title and the intro.
        It starts slightly below the hero bottom so the intro is clipped.
@@ -241,6 +294,12 @@ body > *{
 .heroTrigger:focus-within .heroPanel{
   transform: translateY(0);
 }
+.heroTrigger:hover .heroSideCta,
+.heroTrigger:focus-within .heroSideCta{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
 
     .heroIntro{
       margin: 0;
@@ -250,6 +309,49 @@ body > *{
       font-weight: 520;
       line-height: 1.35;
       text-shadow: 0 14px 40px rgba(0,0,0,0.55);
+    }
+    .heroCta{
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      pointer-events: auto;
+      border-radius: 0;
+      transition: color 180ms ease;
+    }
+    .heroCtaLabel{
+      position: absolute;
+      right: 24px;
+      bottom: 58px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px;
+      min-height: 44px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 650;
+      color: rgba(229,231,235,0.96);
+      text-shadow: 0 12px 36px rgba(0,0,0,0.55);
+      transition: transform 180ms ease, color 180ms ease;
+    }
+    .heroCtaArrow{
+      display: inline-block;
+      transition: transform 180ms ease;
+    }
+    .heroCta:hover,
+    .heroCta:focus-visible{
+      color: #ffffff;
+      text-decoration: none;
+    }
+    .heroCta:hover .heroCtaLabel,
+    .heroCta:focus-visible .heroCtaLabel{
+      transform: translateX(2px);
+    }
+    .heroCta:hover .heroCtaArrow,
+    .heroCta:focus-visible .heroCtaArrow{
+      transform: translateX(4px);
     }
 
     .heroWord{
@@ -272,6 +374,7 @@ body > *{
 
     @media (max-width: 520px){
       .heroStage{ min-height: 360px; }
+      .scroller{ grid-auto-columns: minmax(235px, 78vw); }
     }
 
     .heroCard{
@@ -312,33 +415,74 @@ body > *{
 .menuRow{
   margin-top: 18px;
 }
+.menuRow + .menuRow{
+  border-top: 1px solid rgba(229,231,235,0.22);
+  padding-top: 18px;
+}
 
 .menuLabel{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 48px;
   font-size: 16px;
   font-weight: 750;
   letter-spacing: -0.2px;
   margin: 0 0 10px;
   color: rgba(229,231,235,0.92);
+  background: none;
+  border: 0;
+  padding: 6px 2px;
+  text-align: left;
+  cursor: pointer;
+}
+.menuLabel::after{
+  content: "▾";
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.95;
+  transform: translateY(-4px);
+  transition: transform 180ms ease;
+}
+.menuLabel[aria-expanded="false"]::after{
+  transform: rotate(-90deg);
 }
 
 /* Keep horizontal swipe */
 .scroller{
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(260px, 340px);
+  grid-auto-columns: clamp(260px, 27vw, 330px);
   gap: 12px;
   padding: 0;
   overflow-x: auto;
+  overflow-y: hidden;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
+  max-height: 620px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: max-height 320ms ease, opacity 220ms ease, transform 320ms ease;
 }
+.scroller.isCollapsed{
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+.scroller.isCollapsed::-webkit-scrollbar{ height: 0; }
 .scroller:focus{ outline: none; }
 .scroller::-webkit-scrollbar{ height: 10px; }
 .scroller::-webkit-scrollbar-thumb{
   background: rgba(255,255,255,0.15);
   border-radius: 999px;
   border: 2px solid rgba(11,18,32,0.70);
+}
+@media (prefers-reduced-motion: reduce){
+  .scroller{ transition: none; }
 }
 
 /* Menu card (hero-like): image background + name; hover slides up to reveal intro */
@@ -348,7 +492,8 @@ body > *{
   border-radius: var(--radius);
   border: 1px solid rgba(255,255,255,0.12);
   overflow: hidden;
-  min-height: 400px;
+  aspect-ratio: 2 / 3;
+  min-height: auto;
   background: rgba(255,255,255,0.04);
   box-shadow: 0 14px 44px rgba(0,0,0,0.40);
 }
@@ -358,7 +503,7 @@ body > *{
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.62));
+  background: linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.42));
   z-index: 1;
   pointer-events: none;
 }
@@ -371,18 +516,24 @@ body > *{
   background-size: cover;
   background-repeat: no-repeat;
   z-index: 0;
-  transform: scale(1.03);
+  transform: scale(1.03) scaleX(var(--img-x-scale, 1));
+}
+.menuCard.imgStretch{
+  --img-x-scale: 1.06;
+}
+.menuCard.imgTight{
+  --img-x-scale: 0.95;
 }
 
 .menuCardOverlay{
   position: absolute;
   left: 14px;
   right: 14px;
-  bottom: 28px;
+  bottom: 14px;
   z-index: 2;
 
   display: grid;
-  gap: 8px;
+  gap: 0;
   justify-items: start;
   text-align: left;
 
@@ -410,6 +561,9 @@ body > *{
   font-family: var(--font-display);
   font-variation-settings: "opsz" 48;
 }
+.menuCardName + .menuCardName{
+  margin-top: 2px;
+}
 
 .menuCardDesc{
   margin: 0;
@@ -425,7 +579,13 @@ body > *{
 .menuCardDesc{
   max-height: 0;
   overflow: hidden;
-  transition: max-height 800ms ease, opacity 600ms ease;
+  opacity: 0;
+  margin-top: 0;
+  transform: translateY(8px);
+  transition: max-height 520ms ease, opacity 300ms ease, transform 300ms ease, margin-top 300ms ease;
+}
+.menuCard:not(:hover):not(:focus-within) .menuCardDesc{
+  max-height: 0;
   opacity: 0;
 }
 
@@ -433,6 +593,8 @@ body > *{
 .menuCard:focus-within .menuCardDesc{
   max-height: 200px; /* enough to reveal full text */
   opacity: 1;
+  margin-top: 8px;
+  transform: translateY(0);
 }
 
     /* Footer */
@@ -479,6 +641,25 @@ body > *{
       gap: 10px;
       margin-top: 12px;
     }
+    .btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.07);
+      color: rgba(229,231,235,0.95);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+    .btn:hover{
+      text-decoration: none;
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.2);
+    }
 
     /* Utility */
     .anchor{ scroll-margin-top: 74px; }
@@ -496,17 +677,23 @@ body > *{
   </style>
 </head>
 <body>
+  <div class="splash" id="splash" aria-hidden="true">
+    <video class="splashVideo" id="splashVideo" autoplay muted playsinline preload="auto">
+      <source src="assets/video/open_animation.mp4" type="video/mp4" />
+    </video>
+  </div>
   <div class="topbar">
     <div class="container">
       <div class="inner">
         <a class="brand" href="#top">
           <div>
             <div style="font-size: 14px; line-height: 1;">Farmily</div>
-            <div style="font-size: 12px; color: rgba(229,231,235,0.65); line-height: 1.2;">Bakery & Brunch</div>
+            <div style="font-size: 12px; color: rgba(229,231,235,0.65); line-height: 1.2;">Bakery &amp; Brunch</div>
           </div>
         </a>
 
         <nav class="nav" aria-label="Primary">
+          <a class="pill" href="about.html">关于Farmily</a>
           <a class="pill" href="#menu"><strong>菜单</strong></a>
           <a class="pill" href="#contact">联系我们</a>
         </nav>
@@ -530,6 +717,11 @@ body > *{
         <p class="heroIntro">A cozy bakery + brunch table—warm loaves, silky pasta, and desserts that feel like a little celebration.</p>
       </div>
     </div>
+    <div class="heroSideCta">
+      <a class="heroCta" href="about.html">
+        <span class="heroCtaLabel">了解更多 <span class="heroCtaArrow" aria-hidden="true">→</span></span>
+      </a>
+    </div>
   </div>
 </div>
           </div>
@@ -541,47 +733,65 @@ body > *{
     <section id="menu" class="anchor">
       <div class="container">
         <div class="sectionHead">
-          <h2>菜单</h2>
+          <h2>菜单 （点击展开）</h2> 
         </div>
 
         <!-- i) Sandwiches -->
         <div class="menuRow" aria-labelledby="sandwich-title">
-          <div class="menuLabel" id="sandwich-title">Open Sandwiches</div>
+          <button class="menuLabel" id="sandwich-title" type="button" aria-expanded="false" aria-controls="sandwich-scroller">Open Sandwiches</button>
 
-          <div class="scroller" tabindex="0" data-scroller>
+          <div class="scroller isCollapsed" id="sandwich-scroller" tabindex="0" data-scroller>
             <article class="menuCard">
-              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/1.jpg');" aria-hidden="true"></div>
+              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/1.jpeg');" aria-hidden="true"></div>
               <div class="menuCardOverlay">
-                <div class="menuCardName">超级大虾牛油果开放式三明治</div>
-                <div class="menuCardName">SUPER Large Shrimp+Avacado</div>
-                <p class="menuCardDesc">新鲜的大虾+溏心煎蛋，底层涂抹厚厚的牛油果泥，减脂人士首选的高蛋白一餐！</p>
+                <div class="menuCardName">博洛尼亚招牌开放式三明治</div>
+                <div class="menuCardName">Signature Bolognese Open Sandwich</div>
+                <p class="menuCardDesc">数小时熬制的超多料肉酱+流心无菌蛋（戳破的一刻超治愈），配上店里自己烤的乡村面包</p>
               </div>
             </article>
 
             <article class="menuCard">
-              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/2.jpg');" aria-hidden="true"></div>
+              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/2.jpeg');" aria-hidden="true"></div>
               <div class="menuCardOverlay">
-                <div class="menuCardName">滑蛋三文鱼开放式三明治</div>
-                <div class="menuCardName">Scrambled Eggs with Salmon</div>
-                <p class="menuCardDesc">超级嫩的滑蛋入口即化，三文鱼脑袋的最爱.</p>
-              </div>
-            </article>
-
-            <article class="menuCard">
-              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/3.jpg');" aria-hidden="true"></div>
-              <div class="menuCardOverlay">
-                <div class="menuCardName">莓果乳酪开放式三明治</div>
-                <div class="menuCardName">Berries & Cheese</div>
+                <div class="menuCardName">自制莓果酸奶油开放式三明治</div>
+                <div class="menuCardName">Homemade Mixed Berry Sour Cream Open Sandwich</div>
                 <p class="menuCardDesc">店里自制的莓果乳酪，加上超多新鲜的混合莓果</p>
               </div>
             </article>
 
             <article class="menuCard">
-              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/4.jpg');" aria-hidden="true"></div>
+              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/3.jpeg');" aria-hidden="true"></div>
               <div class="menuCardOverlay">
-                <div class="menuCardName">番茄肉酱开放式三明治</div>
-                <div class="menuCardName">Bolognese Sandwich</div>
-                <p class="menuCardDesc">小时熬制的超多料肉酱+流心无菌蛋（戳破的一刻超治愈），配上店里自己烤的乡村面包</p>
+                <div class="menuCardName">布拉塔番茄火腿芝麻菜开放式三明治</div>
+                <div class="menuCardName">Burrata, Tomato, Ham &amp; Arugula Open Sandwich</div>
+                <p class="menuCardDesc">布拉塔与火腿、番茄、芝麻菜组合，层次丰富，咸鲜平衡。</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/4.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">滑蛋烟熏三文鱼开放式三明治</div>
+                <div class="menuCardName">Scrambled Egg &amp; Smoked Salmon Open Sandwich</div>
+                <p class="menuCardDesc">超级嫩的滑蛋入口即化，三文鱼脑袋的最爱.</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/5.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">超大虾牛油果开放式三明治</div>
+                <div class="menuCardName">King Prawn &amp; Avocado Open Sandwich</div>
+                <p class="menuCardDesc">新鲜的大虾+溏心煎蛋，底层涂抹厚厚的牛油果泥，减脂人士首选的高蛋白一餐！</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/sandwiches/6.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">香草青酱鸡肉开放式三明治</div>
+                <div class="menuCardName">Signature Pesto Chicken Open Sandwich</div>
+                <p class="menuCardDesc">香草青酱与鸡肉组合，风味清新，咸香不腻。</p>
               </div>
             </article>
           </div>
@@ -589,14 +799,14 @@ body > *{
 
         <!-- ii) Pasta -->
         <div class="menuRow" aria-labelledby="pasta-title">
-          <div class="menuLabel" id="pasta-title">Pasta</div>
+          <button class="menuLabel" id="pasta-title" type="button" aria-expanded="false" aria-controls="pasta-scroller">Pasta</button>
 
-          <div class="scroller" tabindex="0" data-scroller>
+          <div class="scroller isCollapsed" id="pasta-scroller" tabindex="0" data-scroller>
             <article class="menuCard">
               <div class="menuCardImg" style="background-image:url('assets/menu/pasta/1.jpg');" aria-hidden="true"></div>
               <div class="menuCardOverlay">
-                <div class="menuCardName">博洛尼亚肉酱意面</div>
-                <div class="menuCardName">Pasta di Bologna</div>
+                <div class="menuCardName">经典博洛尼亚肉酱面</div>
+                <div class="menuCardName">Classic Bolognese Pasta</div>
                 <p class="menuCardDesc">满满的肉酱，价值感超足的摆盘，出片又好吃.</p>
               </div>
             </article>
@@ -605,7 +815,7 @@ body > *{
               <div class="menuCardImg" style="background-image:url('assets/menu/pasta/2.jpg');" aria-hidden="true"></div>
               <div class="menuCardOverlay">
                 <div class="menuCardName">蘑菇培根奶油意面</div>
-                <div class="menuCardName">Pappardelle alla crema di funghi</div>
+                <div class="menuCardName">Creamy Mushroom &amp; Bacon Pasta</div>
                 <p class="menuCardDesc">浓郁的奶香和芝士香，爱吃宽面的朋友们可以冲！</p>
               </div>
             </article>
@@ -614,7 +824,7 @@ body > *{
               <div class="menuCardImg" style="background-image:url('assets/menu/pasta/3.jpg');" aria-hidden="true"></div>
               <div class="menuCardOverlay">
                 <div class="menuCardName">辣奶油培根意面</div>
-                <div class="menuCardName">Spicy Cream and Bacon</div>
+                <div class="menuCardName">Spicy Creamy Bacon Pasta</div>
                 <p class="menuCardDesc">一些韩式风味，辣味和培根的香气很好中和了奶油，好吃不腻</p>
               </div>
             </article>
@@ -623,23 +833,234 @@ body > *{
               <div class="menuCardImg" style="background-image:url('assets/menu/pasta/4.jpg');" aria-hidden="true"></div>
               <div class="menuCardOverlay">
                 <div class="menuCardName">渔港海鲜意面</div>
-                <div class="menuCardName">Fisherman's Spaghetti</div>
+                <div class="menuCardName">Harbor Seafood Pasta</div>
                 <p class="menuCardDesc">非常丰富新鲜海鲜：黑虎虾、青口贝、鱿鱼，海鲜爱好者会喜欢.</p>
               </div>
             </article>
           </div>
         </div>
 
-        <!-- iii) Desserts -->
-        <div class="menuRow" aria-labelledby="yogurt-title">
-          <div class="menuLabel" id="yogurt-title">Yogurt Bowls</div>
+        <!-- iii) Eggs Benedicts -->
+        <div class="menuRow" aria-labelledby="eggs-benedicts-title">
+          <button class="menuLabel" id="eggs-benedicts-title" type="button" aria-expanded="false" aria-controls="eggs-benedicts-scroller">Eggs Benedicts</button>
 
-          <div class="scroller" tabindex="0" data-scroller>
+          <div class="scroller isCollapsed" id="eggs-benedicts-scroller" tabindex="0" data-scroller>
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Eggs Benedicts/1.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">烟熏三文鱼班尼迪克蛋</div>
+                <div class="menuCardName">Smoked Salmon Eggs Benedict</div>
+                <p class="menuCardDesc">水波蛋搭配英式松饼与香浓荷兰酱，口感柔滑，风味平衡。</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Eggs Benedicts/2.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">菠菜火腿班尼迪克蛋</div>
+                <div class="menuCardName">Spinach Ham Eggs Benedict</div>
+                <p class="menuCardDesc">在经典版本上加入更浓郁的咸香层次，适合偏爱重风味的早餐选择。</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- iv) Shakshukas -->
+        <div class="menuRow" aria-labelledby="shakshukas-title">
+          <button class="menuLabel" id="shakshukas-title" type="button" aria-expanded="false" aria-controls="shakshukas-scroller">Shakshukas</button>
+
+          <div class="scroller isCollapsed" id="shakshukas-scroller" tabindex="0" data-scroller>
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Shakshukas/1.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">招牌农场肉酱北非蛋</div>
+                <div class="menuCardName">Signature Farm Bolognese Shakshuka</div>
+                <p class="menuCardDesc">番茄与香料慢炖，搭配半熟蛋，酸甜与香气层层展开。</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Shakshukas/2.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">经典北非蛋</div>
+                <div class="menuCardName">Classic Shakshuka</div>
+                <p class="menuCardDesc">加入奶酪与香草提升醇厚度，配面包蘸食更有满足感。</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- v) Breakfast -->
+        <div class="menuRow" aria-labelledby="breakfast-title">
+          <button class="menuLabel" id="breakfast-title" type="button" aria-expanded="false" aria-controls="breakfast-scroller">Breakfast</button>
+
+          <div class="scroller isCollapsed" id="breakfast-scroller" tabindex="0" data-scroller>
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Breakfast/1.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">经典乡村大早餐</div>
+                <div class="menuCardName">Classic Farmhouse Breakfast</div>
+                <p class="menuCardDesc">以烘焙、蛋类与时蔬组成的丰盛早午餐搭配，口感层次完整。</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- vi) French Toasts -->
+        <div class="menuRow" aria-labelledby="french-toasts-title">
+          <button class="menuLabel" id="french-toasts-title" type="button" aria-expanded="false" aria-controls="french-toasts-scroller">French Toasts</button>
+
+          <div class="scroller isCollapsed" id="french-toasts-scroller" tabindex="0" data-scroller>
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/French Toasts/1.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">原味法式吐司</div>
+                <div class="menuCardName">Original French Toast</div>
+                <p class="menuCardDesc">外层微脆、内里柔软，搭配水果与糖浆，甜度平衡不腻口。</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/French Toasts/2.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">开心果法式吐司</div>
+                <div class="menuCardName">Pistachio French Toast</div>
+                <p class="menuCardDesc">新鲜莓果与奶香吐司组合，酸甜清爽，口感轻盈。</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/French Toasts/3.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">森林莓果法式吐司</div>
+                <div class="menuCardName">Forest Berry French Toast</div>
+                <p class="menuCardDesc">带有焦糖香气与奶蛋风味，适合偏爱浓郁甜点口味的客人。</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- vii) Salads -->
+        <div class="menuRow" aria-labelledby="salads-title">
+          <button class="menuLabel" id="salads-title" type="button" aria-expanded="false" aria-controls="salads-scroller">Salads</button>
+
+          <div class="scroller isCollapsed" id="salads-scroller" tabindex="0" data-scroller>
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Salads/1.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">卡布里沙拉</div>
+                <div class="menuCardName">Caprese Salad</div>
+                <p class="menuCardDesc">多种新鲜蔬菜搭配清爽酱汁，适合当作轻食或配餐。</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Salads/2.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">芝麻菜甜橙沙拉配红油醋汁</div>
+                <div class="menuCardName">Arugula &amp; Sweet Orange Salad with Vinaigrette</div>
+                <p class="menuCardDesc">加入谷物与蔬果，口感更饱满，兼顾营养与饱腹感。</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Salads/3.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">农场凯撒鸡肉沙拉</div>
+                <div class="menuCardName">Farm Chicken Caesar Salad</div>
+                <p class="menuCardDesc">以当季食材为主，风味自然清新，适合日常轻负担饮食。</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- viii) Soups -->
+        <div class="menuRow" aria-labelledby="soups-title">
+          <button class="menuLabel" id="soups-title" type="button" aria-expanded="false" aria-controls="soups-scroller">Soups</button>
+
+          <div class="scroller isCollapsed" id="soups-scroller" tabindex="0" data-scroller>
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Soups/1.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">意大利田园蔬菜汤</div>
+                <div class="menuCardName">Tuscan Garden Vegetable Soup</div>
+                <p class="menuCardDesc">口感顺滑、香气温和，适合作为餐前开胃或暖身选择。</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Soups/2.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">奶油蘑菇浓汤</div>
+                <div class="menuCardName">Creamy Mushroom Soup</div>
+                <p class="menuCardDesc">蔬菜甜味与奶香融合，风味柔和，层次细腻。</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Soups/3.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">农场黄金南瓜汤</div>
+                <div class="menuCardName">Golden Pumpkin Farm Soup</div>
+                <p class="menuCardDesc">依据当日食材调整风味，带来更有新鲜感的限定口味。</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- ix) Snacks -->
+        <div class="menuRow" aria-labelledby="snacks-title">
+          <button class="menuLabel" id="snacks-title" type="button" aria-expanded="false" aria-controls="snacks-scroller">Snacks</button>
+
+          <div class="scroller isCollapsed" id="snacks-scroller" tabindex="0" data-scroller>
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Snacks/1.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">乡村红薯条</div>
+                <div class="menuCardName">Country Sweet Potato Fries</div>
+                <p class="menuCardDesc">适合分享的小份组合，口味丰富，搭配饮品更合适。</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Snacks/2.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">乡村薯条配香草黑松露酱</div>
+                <div class="menuCardName">Country Fries with Black Truffle Sauce</div>
+                <p class="menuCardDesc">外层酥香、内里柔软，适合作为早午餐之间的加餐选择。</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Snacks/3.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">乡村烤蔬菜拼盘</div>
+                <div class="menuCardName">Roasted Seasonal Vegetable Platter</div>
+                <p class="menuCardDesc">奶香更突出，口感扎实，适合喜欢浓郁风味的客人。</p>
+              </div>
+            </article>
+
+            <article class="menuCard">
+              <div class="menuCardImg" style="background-image:url('assets/menu/Snacks/4.jpeg');" aria-hidden="true"></div>
+              <div class="menuCardOverlay">
+                <div class="menuCardName">居酒屋南肉松鸡翅</div>
+                <div class="menuCardName">Signature Salted Egg Yolk Chicken Wings with Pork Floss</div>
+                <p class="menuCardDesc">根据当日准备调整，保持新鲜与多样化体验。</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- x) Yogurt Bowls -->
+        <div class="menuRow" aria-labelledby="yogurt-title">
+          <button class="menuLabel" id="yogurt-title" type="button" aria-expanded="false" aria-controls="yogurt-scroller">Yogurt Bowls</button>
+
+          <div class="scroller isCollapsed" id="yogurt-scroller" tabindex="0" data-scroller>
             <article class="menuCard">
               <div class="menuCardImg" style="background-image:url('assets/menu/yogurt-bowls/1.jpg');" aria-hidden="true"></div>
               <div class="menuCardOverlay">
-                <div class="menuCardName">莓果脆脆碗</div>
-                <div class="menuCardName">Berry Crunch Bowl</div>
+                <div class="menuCardName">混合莓果酸奶碗</div>
+                <div class="menuCardName">Mixed Berry Yogurt Bowl</div>
                 <p class="menuCardDesc">+自制格兰诺拉Granola燕麦片+大块农场蜂巢+新鲜水果和果酱.</p>
               </div>
             </article>
@@ -647,8 +1068,8 @@ body > *{
             <article class="menuCard">
               <div class="menuCardImg" style="background-image:url('assets/menu/yogurt-bowls/2.jpg');" aria-hidden="true"></div>
               <div class="menuCardOverlay">
-                <div class="menuCardName">黑芝麻红豆蜂巢酸奶碗</div>
-                <div class="menuCardName">Black Sesame, Red Bean and Honeycomb</div>
+                <div class="menuCardName">自制红豆黑芝麻酸奶碗</div>
+                <div class="menuCardName">Red Bean and Black Sesame Yogurt Bowl</div>
                 <p class="menuCardDesc">浓郁的黑芝麻酱+手工酸奶+自制Granola燕麦片+手工熬制红豆馅料+农场蜂巢！</p>
               </div>
             </article>
@@ -656,20 +1077,15 @@ body > *{
             <article class="menuCard">
               <div class="menuCardImg" style="background-image:url('assets/menu/yogurt-bowls/3.jpg');" aria-hidden="true"></div>
               <div class="menuCardOverlay">
-                <div class="menuCardName">看得出来有香蕉但是网页作者不知道这个碗的名字叫什么</div>
-                <p class="menuCardDesc">banana.</p>
-              </div>
-            </article>
-
-            <article class="menuCard">
-              <div class="menuCardImg" style="background-image:url('assets/menu/yogurt-bowls/4.jpg');" aria-hidden="true"></div>
-              <div class="menuCardOverlay">
-                <div class="menuCardName">这个碗和第一张图是不是同一个东西来着</div>
-                <p class="menuCardDesc">想不到要写什么，那就先祝Milly天天开心吧！</p>
+                <div class="menuCardName">巧克力可可酸奶碗</div>
+                <div class="menuCardName">Chocolate Banana Yogurt Bowl</div>
+                <p class="menuCardDesc">香蕉片、手工酸奶和蜂蜜组合，口味柔和清爽，适合当作轻负担早餐。</p>
               </div>
             </article>
           </div>
         </div>
+      </div>
+    </section>
 
     <!-- 3) Address + email + social links -->
     <footer id="contact" class="anchor">
@@ -688,11 +1104,12 @@ body > *{
             <h3>社交媒体</h3>
             <div class="social">
               <a class="btn" href="https://xhslink.com/m/8PwnxWfJlI1" target="_blank" rel="noopener noreferrer">关注小红书</a>
+            </div>
           </div>
         </div>
 
         <div style="margin-top: 14px; color: rgba(229,231,235,0.55); font-size: 12px;">
-          © <span id="year"></span> Farmily. Built with love & butter.
+          © <span id="year"></span> Farmily. Built with love &amp; butter.
         </div>
       </div>
     </footer>
@@ -709,23 +1126,7 @@ body > *{
         e.preventDefault();
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
-    });
-
-    // Row scroll controls
-    function scrollRow(btn, dir){
-      const row = btn.closest('.menuRow');
-      const scroller = row ? row.querySelector('[data-scroller]') : null;
-      if (!scroller) return;
-      const amount = Math.max(260, Math.floor(scroller.clientWidth * 0.85));
-      scroller.scrollBy({ left: dir * amount, behavior: 'smooth' });
-    }
-
-    document.querySelectorAll('button[data-scroll]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const dir = btn.dataset.scroll === 'left' ? -1 : 1;
-        scrollRow(btn, dir);
-      });
-    });
+    })
 
     // Keyboard support when scroller focused
     document.querySelectorAll('[data-scroller]').forEach(scroller => {
@@ -735,6 +1136,19 @@ body > *{
         const dir = e.key === 'ArrowLeft' ? -1 : 1;
         const amount = Math.max(260, Math.floor(scroller.clientWidth * 0.85));
         scroller.scrollBy({ left: dir * amount, behavior: 'smooth' });
+      });
+    });
+
+    // Collapsible menu categories
+    document.querySelectorAll('.menuLabel[aria-controls]').forEach((btn) => {
+      const scrollerId = btn.getAttribute('aria-controls');
+      const scroller = scrollerId ? document.getElementById(scrollerId) : null;
+      if (!scroller) return;
+
+      btn.addEventListener('click', () => {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        scroller.classList.toggle('isCollapsed', expanded);
       });
     });
 // Hero slideshow (cross-fade). Put images in assets/hero/ and list them here.
@@ -779,20 +1193,51 @@ function initHeroSlideshow(){
 }
 
 window.addEventListener('load', initHeroSlideshow);
-    // Adaptive hero reveal: compute how far to push the block down so the intro is fully hidden.
+
+    // Video splash screen
+    (function initSplashVideo(){
+      const splash = document.getElementById('splash');
+      const video = document.getElementById('splashVideo');
+      if (!splash) return;
+
+      let closed = false;
+      const closeSplash = () => {
+        if (closed) return;
+        closed = true;
+        splash.classList.add('isDone');
+        setTimeout(() => splash.remove(), 420);
+      };
+
+      // Fallback: auto-close if the video cannot finish normally.
+      const fallbackTimer = setTimeout(closeSplash, 2500);
+      if (!video) {
+        closeSplash();
+        return;
+      }
+
+      video.addEventListener('ended', () => {
+        clearTimeout(fallbackTimer);
+        closeSplash();
+      }, { once: true });
+      video.addEventListener('error', closeSplash, { once: true });
+      const playPromise = video.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(closeSplash);
+      }
+    })();
+
+    // Adaptive hero reveal: keep only the title visible initially, and reveal the rest on hover/focus.
     function updateHeroPanelOffset(){
       const panel = document.querySelector('.heroPanel');
       const intro = document.querySelector('.heroIntro');
-      if (!panel || !intro) return;
+      const title = document.querySelector('.heroWord');
+      if (!panel || !intro || !title) return;
 
-      // Height of the intro plus the vertical gap between title and intro.
-      // Add a bigger safety margin so nothing peeks out.
-      const gap = 10; // matches CSS gap in .heroPanel
-      const safety = 18; // bigger safety so nothing peeks out
-
-      const introH = Math.ceil(intro.getBoundingClientRect().height);
-      // Ensure we always hide the entire intro (and a bit more) even during font/layout changes.
-      const offset = Math.max(90, introH + gap + safety);
+      const safety = 18;
+      const panelH = Math.ceil(panel.getBoundingClientRect().height);
+      const titleH = Math.ceil(title.getBoundingClientRect().height);
+      // Hide everything below the title (intro + CTA + gaps).
+      const offset = Math.max(90, panelH - titleH + safety);
       panel.style.setProperty('--panel-offset', `${offset}px`);
     }
 

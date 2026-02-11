@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>关于 Farmily</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600..900&family=Inter:wght@400;500;600;700;800&display=swap');
+
+    :root{
+      --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --font-display: Fraunces, ui-serif, Georgia, "Times New Roman", Times, serif;
+      --topbar-height: 62px;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      font-family: var(--font-sans);
+      background: #fff;
+    }
+
+    a{ color: inherit; text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+    .splash{
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: grid;
+      place-items: center;
+      background: #f2e8d8 url("assets/video/animation_bg.jpg") center / cover no-repeat;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 360ms ease, visibility 360ms ease;
+    }
+    .splash::before{
+      content: none;
+    }
+    .splash::after{
+      content: none;
+    }
+    .splash.isDone{
+      opacity: 0;
+      visibility: hidden;
+    }
+    .splashVideo{
+      position: relative;
+      z-index: 1;
+      background: #f2e8d8;
+      width: min(68vw, 920px);
+      max-height: 80vh;
+      height: auto;
+      object-fit: cover;
+      display: block;
+      clip-path: inset(2.2% 2.6% 2.4% 2.2% round 16px);
+      filter: brightness(1.12) contrast(1.07);
+      border-radius: 16px;
+      border: none;
+      box-shadow: none;
+    }
+    @media (max-width: 640px){
+      .splashVideo{
+        width: 90vw;
+        clip-path: inset(2.2% 2.8% 2.5% 2.2% round 12px);
+      }
+    }
+
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: linear-gradient(180deg, #3b2418 0%, #2b1a11 100%);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid #6b4a35;
+    }
+    .topbar .inner{
+      min-height: var(--topbar-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 16px;
+    }
+    .brand{
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: #f3dfc2;
+    }
+    .pill{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 244, 226, 0.08);
+      border: 1px solid #b8936a;
+      color: #f3dfc2;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+    .pill:hover{
+      text-decoration: none;
+      background: rgba(255, 244, 226, 0.16);
+      border-color: #d8b488;
+    }
+
+    main{
+      height: calc(100vh - var(--topbar-height));
+    }
+    .aboutCard{
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+    .aboutImage{
+      width: 80%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      background: #1a120d;
+    }
+    .aboutBgLayer{
+      position: absolute;
+      inset: 0;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 900ms ease;
+      will-change: opacity, transform;
+    }
+    .aboutBgLayer.isOn{
+      opacity: 1;
+      animation: aboutKenBurns 7.2s linear both;
+    }
+    @keyframes aboutKenBurns{
+      from{ transform: scale(1.06) translate3d(0, 0, 0); }
+      to{ transform: scale(1.14) translate3d(-2.2%, -1.2%, 0); }
+    }
+    .aboutContent{
+      width: 60%;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      isolation: isolate;
+      padding: clamp(28px, 4vw, 56px);
+      padding-left: clamp(44px, 7vw, 110px);
+      background: #fffbf4;
+      color: #000000;
+      display: grid;
+      align-content: center;
+      gap: 16px;
+    }
+    .aboutDecor{
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .aboutBlob{
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(30px);
+      opacity: 0.7;
+      animation: blobFloat 3s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+    .aboutBlob.one{
+      width: 180px;
+      height: 180px;
+      top: 12%;
+      right: 10%;
+      background: rgba(255, 187, 187, 0.842);
+    }
+    .aboutBlob.two{
+      width: 200px;
+      height: 200px;
+      bottom: 12%;
+      right: 16%;
+      background: rgb(206, 255, 205);
+      animation-duration: 2.6s;
+      animation-delay: -5s;
+    }
+    .aboutBlob.three{
+      width: 160px;
+      height: 160px;
+      top: 42%;
+      left: 8%;
+      background: rgba(255, 213, 162, 0.638);
+      animation-duration: 1.4s;
+      animation-delay: -9s;
+    }
+    .aboutText{
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 16px;
+    }
+    @keyframes blobFloat{
+      from{ transform: translate3d(0, 0, 0) scale(1); }
+      to{ transform: translate3d(-90px, -80px, 0) scale(1.35); }
+    }
+    h1{
+      margin: 0;
+      margin-left: -8px;
+      font-family: var(--font-display);
+      font-size: clamp(34px, 5vw, 52px);
+      line-height: 0.96;
+      letter-spacing: -0.8px;
+      color: #2b0d0d;
+    }
+    .subtitle{
+      margin: 0;
+      color: #340808;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    p{
+      margin: 0;
+      color: #291b1b;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    @media (prefers-reduced-motion: reduce){
+      .aboutBlob{ animation: none; }
+      .aboutBgLayer{ transition: none; }
+      .aboutBgLayer.isOn{ animation: none; transform: none; }
+    }
+
+    @media (max-width: 900px){
+      main{
+        height: auto;
+        min-height: calc(100vh - var(--topbar-height));
+      }
+      .aboutCard{
+        flex-direction: column;
+        min-height: inherit;
+      }
+      .aboutImage{
+        width: 100%;
+        min-height: 300px;
+      }
+      .aboutContent{
+        width: 100%;
+        height: auto;
+        padding-left: clamp(24px, 5vw, 40px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="inner">
+      <a class="brand" href="index.html">Farmily Bakery &amp; Brunch</a>
+      <a class="pill" href="index.html">返回首页</a>
+    </div>
+  </div>
+
+  <main>
+    <section class="aboutCard" aria-labelledby="about-title">
+      <div class="aboutImage" aria-hidden="true">
+        <div class="aboutBgLayer" id="aboutBgA"></div>
+        <div class="aboutBgLayer" id="aboutBgB"></div>
+      </div>
+      <div class="aboutContent">
+        <div class="aboutDecor" aria-hidden="true">
+          <span class="aboutBlob one"></span>
+          <span class="aboutBlob two"></span>
+          <span class="aboutBlob three"></span>
+        </div>
+        <div class="aboutText">
+          <h1 id="about-title">关于Farmily 米舍</h1>
+          <p class="subtitle">始于2025南馆公园的烘焙早午餐品牌</p>
+          <p>致力于用最有温度的方式，把食物带到每一个餐桌上。</p>
+          <p>我们相信从一粒种子到一份面包，</p>
+          <p>每一份食材背后，都藏着人与自然最深的链接。</p>
+          <p>希望大家喜欢这个位于北京市中心的“农场小木屋”。</p>
+          <p>从农场到餐桌，欢迎回家！</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const ABOUT_IMAGES = [
+      "assets/hero/1.jpg",
+      "assets/hero/2.jpg",
+      "assets/hero/3.jpg",
+      "assets/hero/4.jpg",
+      "assets/hero/5.jpg"
+    ];
+
+    function initAboutSlideshow() {
+      const a = document.getElementById("aboutBgA");
+      const b = document.getElementById("aboutBgB");
+      if (!a || !b || !Array.isArray(ABOUT_IMAGES) || ABOUT_IMAGES.length === 0) return;
+
+      ABOUT_IMAGES.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+      });
+
+      let idx = 0;
+      let showingA = true;
+
+      a.style.backgroundImage = `url('${ABOUT_IMAGES[0]}')`;
+      a.classList.add("isOn");
+
+      setInterval(() => {
+        idx = (idx + 1) % ABOUT_IMAGES.length;
+        const nextSrc = ABOUT_IMAGES[idx];
+        const on = showingA ? a : b;
+        const off = showingA ? b : a;
+
+        off.style.backgroundImage = `url('${nextSrc}')`;
+        off.classList.add("isOn");
+        on.classList.remove("isOn");
+
+        showingA = !showingA;
+      }, 6000);
+    }
+
+    window.addEventListener("load", initAboutSlideshow);
+  </script>
+</body>
+</html>
