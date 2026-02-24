@@ -413,6 +413,23 @@ body > *{
     section{
       padding: 28px 0;
     }
+    .videoShowcase{
+      padding: 8px 0 16px;
+    }
+    .videoFrame{
+      border-radius: calc(var(--radius) + 6px);
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 14px 50px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+    .videoFrame video{
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 7.6;
+      object-fit: cover;
+      background: #000;
+    }
     .sectionHead{
       display: flex;
       align-items: baseline;
@@ -1104,6 +1121,16 @@ body > *{
               </div>
             </article>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="videoShowcase" aria-label="Featured video">
+      <div class="container">
+        <div class="videoFrame">
+          <video autoplay muted loop playsinline controls preload="metadata">
+            <source src="assets/video/video.mp4" type="video/mp4" />
+          </video>
         </div>
       </div>
     </section>
